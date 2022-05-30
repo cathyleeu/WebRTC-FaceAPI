@@ -2,7 +2,8 @@ import type { NextPage } from 'next';
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import SocketIO from 'socket.io-client'
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Home.module.css';
+import Player from '../components/Player';
 
 
 let socket;
@@ -30,7 +31,8 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-
+        {/* <video src=""></video> */}
+        <Player />
       </main>
 
       <footer className={styles.footer}>
