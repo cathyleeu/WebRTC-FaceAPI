@@ -15,6 +15,9 @@ export default async function SocketHandler(
     const server:NetServer = res.socket.server as any;
     const io = new ServerIO(server);
     res.socket.server.io = io;
+    io.on('connection', (socket) => {
+      console.log('connected');
+    })
   }
   res.end();
 };
