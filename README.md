@@ -12,3 +12,11 @@ yarn dev
 ```
 
 
+## TODO 
+
+- ### Setup 
+  - [x]  Socket Io
+  - [ ]  Socket Context 
+  - [ ]  Media & WebRTC API
+
+
