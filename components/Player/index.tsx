@@ -9,6 +9,14 @@ interface MediaSettingType {
   mic?: boolean;
   cam?: boolean;
 }
+
+const iceServers = {
+  'iceServers': [
+      { 'url': 'stun:mtcnnRstun.services.mozilla.com' },
+      { 'url': 'stun:stun.l.google.com:19302' }
+  ]
+}
+
 const Player = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentStream, setCurrentStream] = useState<MediaStream>();
