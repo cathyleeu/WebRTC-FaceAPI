@@ -3,8 +3,13 @@ import { createContext, useState, useEffect, useContext } from "react";
 import SocketIO, { Socket } from 'socket.io-client';
 
 
+type Message = {
+  message: string; 
+  username: string;
+}
 interface SocketContextType {
-  socket: Socket | undefined;
+  messages?: Message[];
+  sendMessage: (message:Message) => void;
 }
 
 export const SocketContxt = createContext<SocketContextType>({} as SocketContextType)
@@ -16,40 +21,56 @@ interface Props {
 }
 
 
-const HeaderProvider = ({ children }:Props) => {
+const SocketProvider = ({ children }:Props) => {
   const [socket, setSocket] = useState<Socket | undefined>();
+  const [connected, setConnected] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    connect();
-    return () => {
-      disconnect();
+    if(!connected) {
+      connect();
     }
-  }, [])
+
+    socket?.on('message', (message) => {
+      messages.push(message);
+      setMessages([...messages]);
+    })
+
+    if(connected) return () => {
+      socket?.disconnect();
+      setConnected(false);
+    }
+  }, [connected])
 
   const connect = async () => {
     await fetch('/api/socket');
     setSocket(SocketIO());
-    return null;
+    setConnected(true);
   }
 
-  const disconnect = () => {
-    console.log('disconnect');
-    // socket?.disconnect();
-    socket?.emit('disconneted');
+  async function sendMessage(message:Message) {
+    await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(message)
+    })
   }
 
   return (
     <SocketContxt.Provider value={{ 
-      socket
+      sendMessage,
+      messages
      }}>
       {children}
     </SocketContxt.Provider>
   );
 };
 
-export const useSocketContxt = () => {
+export const useSocket = () => {
   return useContext(SocketContxt);
 };
 
-export default HeaderProvider;
+export default SocketProvider;
 
