@@ -1,8 +1,9 @@
-import '../styles/globals.css'
+import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
-import SocketProvider from '../components/Socket'
+import Layout from '@components/Layout'
+import SocketProvider from '@components/Socket'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -11,7 +12,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>WebRTC-FaceApi</title>
       </Head>
       <SocketProvider>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </SocketProvider>
     </> 
   )
