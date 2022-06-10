@@ -3,24 +3,21 @@ import Player from '@components/Player';
 import { createUUID } from '@utils/index';
 import {useSocket} from '@components/Socket';
 import { useMedia } from '../Player/MediaContext'
+import {iceServers, getRTCPeerConnection} from '@hooks/useRTCPeerConnection'
 
-// TODO : list peerConnections
-// function setUpPeer(peerUuid, displayName, initCall = false) {
-//   peerConnections[peerUuid] = { 'displayName': displayName, 'pc': new RTCPeerConnection(peerConnectionConfig) };
-//   peerConnections[peerUuid].pc.onicecandidate = event => gotIceCandidate(event, peerUuid);
-//   peerConnections[peerUuid].pc.ontrack = event => gotRemoteStream(event, peerUuid);
-//   peerConnections[peerUuid].pc.oniceconnectionstatechange = event => checkPeerDisconnect(event, peerUuid);
-//   peerConnections[peerUuid].pc.addStream(localStream);
-
-//   if (initCall) {
-//     peerConnections[peerUuid].pc.createOffer().then(description => createdDescription(description, peerUuid)).catch(errorHandler);
-//   }
-// }
+interface Peers {
+  [peerUuid:string]: {
+    username: string;
+    uuid: string;
+    pc: RTCPeerConnection;
+  }
+}
 
 const Conference = () => {
   const { socket, connected } = useSocket();
   const {currentStream} = useMedia();
   const [localUUID, setLocalUUID] = useState('');
+  const [peers, setPeers] = useState<Peers>({})
   useEffect(() => {
 
   }, [])
@@ -49,6 +46,13 @@ const Conference = () => {
   const handleStop = () => {
     // videoRef.current.stop()
     // stopMediaStream(currentStream);
+  }
+
+  async function setUpPeer(peerUuid:string, username:string, isCaller = false) {
+    const pc = await getRTCPeerConnection(peerUuid, currentStream!, isCaller);
+
+    peers[peerUuid] = { username, uuid: peerUuid, pc }
+    setPeers(peers)
   }
   return (
     <div>
